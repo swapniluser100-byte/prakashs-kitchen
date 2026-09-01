@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakash's Kitchen — Home-style café in [Your City]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon: #6B2737;
+    --maroon-dark: #4A1B27;
+    --gold: #C0862B;
+    --gold-light: #E0AC55;
+    --ivory: #F7EFDD;
+    --ivory-dim: #EFE4CB;
+    --espresso: #2E211A;
+    --sage: #5C6B47;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--ivory);
+    color:var(--espresso);
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    color:var(--maroon-dark);
+    font-weight:600;
+    line-height:1.15;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* Skip link for accessibility */
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:var(--gold); color:var(--espresso);
+    padding:10px 16px; z-index:200;
+  }
+  .skip-link:focus{left:16px; top:16px;}
+
+  :focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+  /* ===== Header ===== */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:var(--ivory);
+    border-bottom:1px solid rgba(46,33,26,0.12);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+    max-width:1080px; margin:0 auto;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.3rem;
+    color:var(--maroon-dark);
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand-mark{
+    width:34px; height:34px; border-radius:50%;
+    background:var(--maroon);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ivory); font-size:1rem; flex-shrink:0;
+  }
+  .nav-links{display:flex; gap:28px; list-style:none;}
+  .nav-links a{
+    font-size:0.95rem; font-weight:500; color:var(--espresso);
+    padding:6px 2px; border-bottom:2px solid transparent;
+    transition:border-color 0.2s ease;
+  }
+  .nav-links a:hover{border-color:var(--gold);}
+  .nav-toggle{display:none; background:none; border:none; font-size:1.6rem; color:var(--maroon-dark); cursor:pointer;}
+
+  @media (max-width:720px){
+    .nav-links{
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--ivory);
+      flex-direction:column; gap:0;
+      border-bottom:1px solid rgba(46,33,26,0.12);
+      max-height:0; overflow:hidden; transition:max-height 0.25s ease;
+    }
+    .nav-links.open{max-height:280px;}
+    .nav-links a{padding:14px 24px; border-bottom:1px solid rgba(46,33,26,0.08); width:100%;}
+    .nav-toggle{display:block;}
+  }
+
+  /* ===== Hero ===== */
+  .hero{
+    background:var(--maroon);
+    color:var(--ivory);
+    position:relative;
+    overflow:hidden;
+    padding:90px 24px 110px;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(224,172,85,0.15) 0, transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(224,172,85,0.12) 0, transparent 40%);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1080px; margin:0 auto; position:relative;}
+  .hero-eyebrow{
+    color:var(--gold-light); font-size:0.95rem; font-weight:500;
+    margin-bottom:18px; letter-spacing:0.02em;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    color:var(--ivory);
+    max-width:11ch;
+    margin-bottom:22px;
+  }
+  .hero p{
+    max-width:46ch; font-size:1.15rem; color:rgba(247,239,221,0.88);
+    margin-bottom:34px;
+  }
+  .hero-actions{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{
+    display:inline-block; padding:14px 28px; border-radius:3px;
+    font-weight:600; font-size:0.98rem; cursor:pointer;
+    border:1.5px solid transparent; transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary{background:var(--gold); color:var(--espresso);}
+  .btn-primary:hover{background:var(--gold-light); transform:translateY(-1px);}
+  .btn-outline{border-color:rgba(247,239,221,0.5); color:var(--ivory);}
+  .btn-outline:hover{border-color:var(--ivory); background:rgba(247,239,221,0.08);}
+
+  .hero-divider{
+    position:absolute; bottom:0; left:0; right:0; height:44px;
+    background:var(--ivory);
+    clip-path: polygon(0 100%, 100% 100%, 100% 0%,
+      97% 44%, 94% 0%, 91% 44%, 88% 0%, 85% 44%, 82% 0%, 79% 44%, 76% 0%,
+      73% 44%, 70% 0%, 67% 44%, 64% 0%, 61% 44%, 58% 0%, 55% 44%, 52% 0%,
+      49% 44%, 46% 0%, 43% 44%, 40% 0%, 37% 44%, 34% 0%, 31% 44%, 28% 0%,
+      25% 44%, 22% 0%, 19% 44%, 16% 0%, 13% 44%, 10% 0%, 7% 44%, 4% 0%, 1% 44%, 0% 0%);
+  }
+
+  section{padding:80px 0;}
+  .section-head{max-width:60ch; margin-bottom:48px;}
+  .section-head .kicker{color:var(--gold); font-weight:600; font-size:0.95rem; margin-bottom:10px;}
+  .section-head h2{font-size:clamp(1.8rem, 4vw, 2.6rem);}
+
+  /* ===== About ===== */
+  .about{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  .about-visual{
+    background:var(--ivory-dim);
+    border:1px solid rgba(46,33,26,0.12);
+    aspect-ratio:4/5;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .about-visual::before{
+    content:"";
+    position:absolute; inset:18px;
+    border:1px solid var(--gold);
+  }
+  .about-visual span{
+    font-family:'Fraunces', serif; font-style:italic; font-size:1.1rem;
+    color:var(--maroon); text-align:center; padding:0 30px;
+  }
+  .about-text p{margin-bottom:16px; color:rgba(46,33,26,0.85);}
+  .about-stats{display:flex; gap:32px; margin-top:28px;}
+  .stat b{font-family:'Fraunces', serif; font-size:1.8rem; color:var(--maroon-dark); display:block;}
+  .stat span{font-size:0.9rem; color:rgba(46,33,26,0.65);}
+
+  @media (max-width:820px){
+    .about{grid-template-columns:1fr;}
+    .about-visual{order:-1; aspect-ratio:16/9;}
+  }
+
+  /* ===== Menu ===== */
+  .menu{background:var(--ivory-dim);}
+  .menu-groups{display:grid; grid-template-columns:1fr 1fr; gap:0 60px;}
+  .menu-group{margin-bottom:40px;}
+  .menu-group h3{
+    font-size:1.25rem; color:var(--sage); margin-bottom:6px;
+    padding-bottom:10px; border-bottom:1px solid rgba(46,33,26,0.15);
+  }
+  .menu-item{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:12px; padding:14px 0; border-bottom:1px dotted rgba(46,33,26,0.2);
+  }
+  .menu-item:last-child{border-bottom:none;}
+  .menu-item-name{font-weight:600; color:var(--espresso);}
+  .menu-item-desc{display:block; font-size:0.88rem; color:rgba(46,33,26,0.6); font-weight:400; margin-top:2px;}
+  .menu-item-price{font-family:'Fraunces', serif; color:var(--maroon); white-space:nowrap; font-weight:600;}
+
+  @media (max-width:720px){
+    .menu-groups{grid-template-columns:1fr;}
+  }
+
+  /* ===== Gallery ===== */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    grid-auto-rows:110px;
+    gap:10px;
+  }
+  .gallery-item{
+    border-radius:2px;
+    display:flex; align-items:end;
+    padding:14px;
+    color:var(--ivory);
+    font-size:0.85rem; font-weight:500;
+    position:relative; overflow:hidden;
+  }
+  .gallery-item::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.45) 100%);
+  }
+  .gallery-item span{position:relative; z-index:1;}
+  .g1{grid-column:span 3; grid-row:span 2; background:linear-gradient(135deg,#8A3A44,#6B2737);}
+  .g2{grid-column:span 3; grid-row:span 1; background:linear-gradient(135deg,#C0862B,#9C6A1E);}
+  .g3{grid-column:span 3; grid-row:span 1; background:linear-gradient(135deg,#5C6B47,#44502F);}
+  .g4{grid-column:span 2; grid-row:span 1; background:linear-gradient(135deg,#4A1B27,#2E211A);}
+  .g5{grid-column:span 2; grid-row:span 1; background:linear-gradient(135deg,#E0AC55,#C0862B);}
+  .g6{grid-column:span 2; grid-row:span 1; background:linear-gradient(135deg,#6B2737,#8A3A44);}
+
+  @media (max-width:720px){
+    .gallery-grid{grid-template-columns:repeat(2,1fr); grid-auto-rows:120px;}
+    .g1,.g2,.g3,.g4,.g5,.g6{grid-column:span 1; grid-row:span 1;}
+  }
+
+  .gallery-note{margin-top:20px; font-size:0.9rem; color:rgba(46,33,26,0.6);}
+
+  /* ===== Contact ===== */
+  .contact{background:var(--maroon); color:var(--ivory);}
+  .contact .section-head h2{color:var(--ivory);}
+  .contact .section-head .kicker{color:var(--gold-light);}
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+  .contact-info dl{display:grid; grid-template-columns:auto 1fr; gap:10px 18px; margin-bottom:28px;}
+  .contact-info dt{font-weight:600; color:var(--gold-light); font-size:0.9rem;}
+  .contact-info dd{color:rgba(247,239,221,0.9);}
+  .hours-list{list-style:none; font-size:0.95rem;}
+  .hours-list li{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(247,239,221,0.15); max-width:280px;}
+
+  form{display:flex; flex-direction:column; gap:16px;}
+  label{font-size:0.88rem; font-weight:600; color:var(--gold-light); margin-bottom:6px; display:block;}
+  input, textarea{
+    width:100%; padding:12px 14px;
+    background:rgba(247,239,221,0.08);
+    border:1px solid rgba(247,239,221,0.3);
+    border-radius:2px; color:var(--ivory); font-family:inherit; font-size:0.95rem;
+  }
+  input::placeholder, textarea::placeholder{color:rgba(247,239,221,0.4);}
+  input:focus, textarea:focus{border-color:var(--gold); background:rgba(247,239,221,0.12);}
+  textarea{resize:vertical; min-height:110px;}
+  .form-note{font-size:0.82rem; color:rgba(247,239,221,0.55); margin-top:-6px;}
+
+  @media (max-width:820px){.contact-grid{grid-template-columns:1fr;}}
+
+  footer{
+    background:var(--espresso); color:rgba(247,239,221,0.7);
+    padding:32px 24px; text-align:center; font-size:0.88rem;
+  }
+  footer a{color:var(--gold-light);}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header>
+  <nav class="nav">
+    <a href="#" class="brand">
+      <span class="brand-mark" aria-hidden="true">P</span>
+      Prakash's Kitchen
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">[Your City] · Since [Year]</p>
+      <h1>Food that tastes like someone's grandmother made it.</h1>
+      <p>A neighbourhood café serving home-style thalis, filter coffee, and slow-cooked comfort food — the way it's always been done in [Your City].</p>
+      <div class="hero-actions">
+        <a href="#menu" class="btn btn-primary">See the menu</a>
+        <a href="#contact" class="btn btn-outline">Find us</a>
+      </div>
+    </div>
+    <div class="hero-divider" aria-hidden="true"></div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <div class="about-visual">
+        <span>[Replace with a photo of your kitchen, dining area, or signature dish]</span>
+      </div>
+      <div class="about-text">
+        <p class="section-head kicker" style="margin-bottom:14px;">Our story</p>
+        <h2 style="margin-bottom:18px;">Cooking the way it's meant to be</h2>
+        <p>Prakash's Kitchen started as a small family stall and grew into a café where regulars know the staff by name. Every recipe here has been in the family for years — the sambar, the pickles, the chai — nothing from a packet.</p>
+        <p>We keep the menu short on purpose. Fewer dishes, made properly, every single day.</p>
+        <div class="about-stats">
+          <div class="stat"><b>[X]</b><span>Years serving [Your City]</span></div>
+          <div class="stat"><b>[X]</b><span>Signature dishes</span></div>
+          <div class="stat"><b>[X]</b><span>Regular customers</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" class="menu">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">What we serve</p>
+        <h2>A menu worth coming back for</h2>
+      </div>
+      <div class="menu-groups">
+        <div>
+          <div class="menu-group">
+            <h3>Breakfast &amp; Tiffin</h3>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Masala Dosa</span><span class="menu-item-desc">Crisp rice crepe, spiced potato, chutneys</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Idli Sambar</span><span class="menu-item-desc">Steamed rice cakes, lentil stew</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Poha</span><span class="menu-item-desc">Flattened rice, peanuts, curry leaf</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+          </div>
+          <div class="menu-group">
+            <h3>Thalis</h3>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Veg Thali</span><span class="menu-item-desc">Dal, sabzi, rice, roti, pickle, papad</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Weekend Special Thali</span><span class="menu-item-desc">Extra sabzi, sweet, buttermilk</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="menu-group">
+            <h3>Beverages</h3>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Filter Coffee</span><span class="menu-item-desc">South Indian style, in steel tumbler</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Masala Chai</span><span class="menu-item-desc">Hand-ground spice blend</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+          </div>
+          <div class="menu-group">
+            <h3>Sweets</h3>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Gulab Jamun</span><span class="menu-item-desc">Served warm, two pieces</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+            <div class="menu-item">
+              <div><span class="menu-item-name">Kesari Bath</span><span class="menu-item-desc">Semolina, saffron, ghee</span></div>
+              <span class="menu-item-price">₹[XX]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">A peek inside</p>
+        <h2>From our kitchen and dining room</h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item g1"><span>Dining room</span></div>
+        <div class="gallery-item g2"><span>Filter coffee</span></div>
+        <div class="gallery-item g3"><span>Weekend thali</span></div>
+        <div class="gallery-item g4"><span>Kitchen</span></div>
+        <div class="gallery-item g5"><span>Sweets counter</span></div>
+        <div class="gallery-item g6"><span>Entrance</span></div>
+      </div>
+      <p class="gallery-note">Replace these placeholder tiles with real photos of your food and space — this is usually the biggest factor in getting customers to visit.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Visit us</p>
+        <h2>We'd love to have you</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <dl>
+            <dt>Address</dt>
+            <dd>[Shop No., Street Name, Area, City — PIN]</dd>
+            <dt>Phone</dt>
+            <dd>[+91 XXXXX XXXXX]</dd>
+            <dt>Email</dt>
+            <dd>[hello@yourcafe.in]</dd>
+          </dl>
+          <ul class="hours-list">
+            <li><span>Mon – Fri</span><span>8:00 am – 9:00 pm</span></li>
+            <li><span>Sat – Sun</span><span>8:00 am – 10:00 pm</span></li>
+          </ul>
+        </div>
+        <form id="contactForm">
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required>
+          </div>
+          <div>
+            <label for="phone">Phone or email</label>
+            <input type="text" id="phone" name="phone" placeholder="So we can reply" required>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Table booking, catering enquiry, feedback..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send message</button>
+          <p class="form-note">Note: this form doesn't send anywhere yet — see the setup note in your deployment guide to connect it.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; <span id="year"></span> Prakash's Kitchen, [Your City]. All rights reserved.</p>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    alert('This form is a placeholder. Connect it to a service like Formspree or Web3Forms to receive real messages — see the deployment guide.');
+  });
+</script>
+
+</body>
+</html>

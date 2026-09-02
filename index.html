@@ -297,7 +297,7 @@
       <h1>Food that tastes like someone's grandmother made it.</h1>
       <p>A neighbourhood café serving home-style thalis, filter coffee, and slow-cooked comfort food — the way it's always been done in Jaipur.</p>
       <div class="hero-actions">
-        <a href="#menu" class="btn btn-primary">See menu</a>
+        <a href="#menu" class="btn btn-primary">See the menu</a>
         <a href="#contact" class="btn btn-outline">Find us</a>
       </div>
     </div>
@@ -439,7 +439,7 @@
             <textarea id="message" name="message" placeholder="Table booking, catering enquiry, feedback..."></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Send message</button>
-          <p class="form-note">Note: this form doesn't send anywhere yet — see the setup note in your deployment guide to connect it.</p>
+          <p class="form-note">We'll get back to you within a day.</p>
         </form>
       </div>
     </div>
@@ -467,9 +467,41 @@
     });
   });
 
+  // Paste your Google Apps Script Web app URL below (ends in /exec)
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzkixZjFua-IlFbYnPb1m4wlTrrBljN7W0vLJk9uj30Q2D-mBzNSL715DbtNOzYpA90LA/exec';
+
   document.getElementById('contactForm').addEventListener('submit', function(e){
     e.preventDefault();
-    alert('This form is a placeholder. Connect it to a service like Formspree or Web3Forms to receive real messages — see the deployment guide.');
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const formData = new FormData(form);
+
+    if (FORM_ENDPOINT.includes('PASTE_YOUR')) {
+      alert('Form endpoint not set up yet. See DEPLOY-GUIDE.md to connect Google Sheets + email.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    })
+    .then(() => {
+      submitBtn.textContent = 'Message sent';
+      form.reset();
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send message';
+      }, 3000);
+    })
+    .catch(() => {
+      alert('Something went wrong. Please try again or call us directly.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send message';
+    });
   });
 </script>
 

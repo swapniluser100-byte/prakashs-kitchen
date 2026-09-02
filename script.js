@@ -18,6 +18,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
   // ===== Menu ordering (cart) =====
   const cart = {}; // { itemName: { price, qty } }
+  let pendingOrder = { note: '', total: 0 }; // snapshot taken when "Proceed to pay" is clicked
 
   document.querySelectorAll('.menu-item[data-price]').forEach(item => {
     const name = item.dataset.name;
@@ -72,40 +73,20 @@ document.getElementById('year').textContent = new Date().getFullYear();
     }
   }
 
-  function logOrderToSheet(note, total, address){
-    const formData = new FormData();
-    formData.append('type', 'order');
-    formData.append('items', note);
-    formData.append('total', total);
-    formData.append('address', address);
-    fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: formData }).catch(() => {});
+  function resetOrderUI(){
+    Object.keys(cart).forEach(name => delete cart[name]);
+    document.querySelectorAll('.qty-value').forEach(el => el.textContent = '0');
+    document.getElementById('deliveryAddress').value = '';
+    document.getElementById('orderRecap').hidden = true;
+    document.getElementById('confirmPaidBtn').hidden = true;
+    document.getElementById('confirmHint').hidden = true;
+    updateOrderSummary();
   }
 
   document.getElementById('proceedToPay').addEventListener('click', () => {
     const total = cartTotal();
     const note = cartNoteText();
-    const addressInput = document.getElementById('deliveryAddress');
-    const address = addressInput.value.trim();
-
-    if (!address){
-      alert('Please enter a delivery address before proceeding.');
-      addressInput.focus();
-      return;
-    }
-
-    logOrderToSheet(note, total, address);
-
-    if (total === 0){
-      alert('Order noted — no payment needed for free items. We\'ll have it ready for you!');
-      Object.keys(cart).forEach(name => delete cart[name]);
-      document.querySelectorAll('.qty-value').forEach(el => el.textContent = '0');
-      addressInput.value = '';
-      updateOrderSummary();
-      return;
-    }
-
-    document.getElementById('upiAmount').value = total;
-    document.getElementById('upiNote').value = note;
+    pendingOrder = { note, total };
 
     const recap = document.getElementById('orderRecap');
     const recapList = document.getElementById('orderRecapList');
@@ -115,12 +96,48 @@ document.getElementById('year').textContent = new Date().getFullYear();
       li.innerHTML = `<span>${i.qty}x ${name}</span><span>₹${i.price * i.qty}</span>`;
       recapList.appendChild(li);
     });
-    document.getElementById('orderRecapAddress').textContent = 'Deliver to: ' + address;
     recap.hidden = false;
 
-    updateQr();
+    // Reset confirmation state from any previous order
+    document.getElementById('confirmPaidBtn').hidden = true;
+    document.getElementById('confirmHint').hidden = true;
+
+    if (total === 0){
+      document.getElementById('paidFlow').hidden = true;
+      document.getElementById('payQrBox').hidden = true;
+      document.getElementById('freeFlow').hidden = false;
+    } else {
+      document.getElementById('paidFlow').hidden = false;
+      document.getElementById('payQrBox').hidden = false;
+      document.getElementById('freeFlow').hidden = true;
+      document.getElementById('upiAmount').value = total;
+      document.getElementById('upiNote').value = note;
+      updateQr();
+    }
+
     document.getElementById('pay').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+
+  function getValidatedAddress(){
+    const addressInput = document.getElementById('deliveryAddress');
+    const address = addressInput.value.trim();
+    if (!address){
+      alert('Please enter a delivery address — it\'s required to complete your order.');
+      addressInput.focus();
+      return null;
+    }
+    return address;
+  }
+
+  function logOrderToSheet(note, total, address, status){
+    const formData = new FormData();
+    formData.append('type', 'order');
+    formData.append('items', note);
+    formData.append('total', total);
+    formData.append('address', address);
+    formData.append('status', status);
+    fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: formData }).catch(() => {});
+  }
 
   // ===== UPI Payment =====
   const UPI_ID = 'swapnilbarad9-1@okaxis';
@@ -149,14 +166,47 @@ document.getElementById('year').textContent = new Date().getFullYear();
   document.getElementById('upiNote').addEventListener('input', updateQr);
   updateQr(); // initial QR on page load
 
+  // Step 1: customer taps "Pay with UPI app" — opens their UPI app, but nothing is
+  // logged yet. No entry is created until they confirm the payment actually happened.
   document.getElementById('upiPayBtn').addEventListener('click', function(){
     const amount = document.getElementById('upiAmount').value;
     if (!amount || Number(amount) <= 0){
       alert('Please enter an amount to pay.');
       return;
     }
+    if (!getValidatedAddress()) return;
+
     const note = document.getElementById('upiNote').value;
     window.location.href = buildUpiLink(amount, note);
+
+    // Reveal the confirmation step once they've been sent to pay
+    document.getElementById('confirmPaidBtn').hidden = false;
+    document.getElementById('confirmHint').hidden = false;
+  });
+
+  // Step 2: customer confirms the payment actually went through — THIS is what
+  // creates the Sheet entry and triggers the email, not the "Pay" click above.
+  document.getElementById('confirmPaidBtn').addEventListener('click', function(){
+    const address = getValidatedAddress();
+    if (!address) return;
+
+    const amount = document.getElementById('upiAmount').value || pendingOrder.total;
+    const note = document.getElementById('upiNote').value || pendingOrder.note;
+
+    logOrderToSheet(note, amount, address, 'Paid (confirmed by customer)');
+    alert('Thank you! Your order has been confirmed and sent to us.');
+    resetOrderUI();
+  });
+
+  // Free items: no payment step needed, but address is still required before
+  // the order is logged.
+  document.getElementById('confirmFreeBtn').addEventListener('click', function(){
+    const address = getValidatedAddress();
+    if (!address) return;
+
+    logOrderToSheet(pendingOrder.note, 0, address, 'Free (confirmed)');
+    alert('Thank you! Your free order has been confirmed and sent to us.');
+    resetOrderUI();
   });
 
   // ===== Contact form =====
